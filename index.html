@@ -34,13 +34,6 @@
             z-index: 1; pointer-events: none; overflow: hidden;
         }
 
-        .cloud {
-            position: absolute; background: #fff; filter: blur(40px);
-            border-radius: 50%; opacity: 0.3; animation: drift linear infinite;
-        }
-
-        @keyframes drift { from { transform: translateX(-50vw); } to { transform: translateX(110vw); } }
-
         .leaf, .feather { position: absolute; opacity: 0.3; pointer-events: none; animation: falling linear infinite; }
         .leaf { width: 12px; height: 20px; background: var(--sage-leaf); border-radius: 0 100% 0 100%; }
         .feather { width: 15px; height: 30px; background: white; border-radius: 50% 50% 10% 10%; filter: blur(1px); }
@@ -113,27 +106,36 @@
             .main-content { margin: 40px auto; padding: 0; }
         }
 
-        .content-side { padding: 40px 25px; text-align: center; background: white; z-index: 5; position: relative;}
-        .image-side { height: 350px; background-size: cover; background-position: center; position: relative; z-index: 1; }
+        .content-side { padding: 50px 30px; text-align: center; background: white; z-index: 5; position: relative;}
+        
+        .image-side { 
+            height: 450px; /* Increased height for better view of subject */
+            background-size: cover; 
+            background-position: center 15%; /* FIX: Keeps the head visible */
+            position: relative; 
+            z-index: 1; 
+        }
         @media (min-width: 768px) { .image-side { height: auto; } }
 
-        /* --- TEAR DESIGN --- */
+        /* --- TEAR DESIGN (Responsive) --- */
         .tear-effect { position: absolute; z-index: 10; pointer-events: none; }
         
+        /* Mobile: Horizontal jagged tear */
         @media (max-width: 767px) {
-            .tear-effect { top: -20px; left: 0; width: 100%; height: 40px; }
+            .tear-effect { top: -25px; left: 0; width: 100%; height: 50px; }
             .tear-gold, .tear-white {
                 position: absolute; width: 100%; height: 100%; left: 0;
-                -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C50,80 100,95 150,85 C200,70 250,90 300,80 C350,95 400,75 450,90 C500,70 550,85 600,75 C650,90 700,80 750,95 C800,75 850,90 900,80 C950,95 1000,75 1000,75 L1000,0 L0,0 Z' /%3E%3C/svg%3E");
-                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C50,80 100,95 150,85 C200,70 250,90 300,80 C350,95 400,75 450,90 C500,70 550,85 600,75 C650,90 700,80 750,95 C800,75 850,90 900,80 C950,95 1000,75 1000,75 L1000,0 L0,0 Z' /%3E%3C/svg%3E");
+                -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C100,60 200,90 300,70 C400,90 500,60 600,80 C700,60 800,90 900,70 C1000,90 1000,90 L1000,0 L0,0 Z' /%3E%3C/svg%3E");
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C100,60 200,90 300,70 C400,90 500,60 600,80 C700,60 800,90 900,70 C1000,90 1000,90 L1000,0 L0,0 Z' /%3E%3C/svg%3E");
                 -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
             }
             .tear-gold { background-color: var(--accent-gold); top: 0; }
-            .tear-white { background-color: white; top: -8px; }
+            .tear-white { background-color: white; top: -10px; }
         }
 
+        /* Desktop: Vertical jagged tear */
         @media (min-width: 768px) {
-            .tear-effect { top: 0; left: -20px; width: 40px; height: 100%; }
+            .tear-effect { top: 0; left: -25px; width: 50px; height: 100%; }
             .tear-gold, .tear-white {
                 position: absolute; width: 100%; height: 100%; top: 0;
                 -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 1000' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C20,50 5,100 15,150 C30,200 10,250 20,300 C5,350 25,400 10,450 C30,500 15,550 25,600 C10,650 20,700 5,750 C25,800 10,850 20,900 C5,950 25,1000 25,1000 L100,1000 L100,0 Z' /%3E%3C/svg%3E");
@@ -141,39 +143,42 @@
                 -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
             }
             .tear-gold { background-color: var(--accent-gold); left: 0; }
-            .tear-white { background-color: white; left: 8px; }
+            .tear-white { background-color: white; left: 10px; }
         }
 
         .photo-1 { background-image: url('1.JPG'); }
         .photo-2 { background-image: url('2.JPG'); }
         .photo-3 { background-image: url('3.JPG'); }
 
-        h1 { font-family: 'Bodoni Moda', serif; font-size: 32px; font-weight: 400; margin: 15px 0; line-height: 1.2; }
-        .date-grid { display: flex; align-items: center; gap: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; justify-content: center; width: 100%; padding: 12px 0; margin: 15px 0; font-size: 11px; }
-        .big-day { font-size: 24px; color: var(--accent-gold); font-weight: bold; }
-        .list-names { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; line-height: 2.2; }
+        h1 { font-family: 'Bodoni Moda', serif; font-size: 36px; font-weight: 400; margin: 15px 0; line-height: 1.1; }
+        .date-grid { display: flex; align-items: center; gap: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; justify-content: center; width: 100%; padding: 15px 0; margin: 20px 0; font-size: 11px; }
+        .big-day { font-size: 28px; color: var(--accent-gold); font-weight: bold; }
+        .list-names { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; line-height: 2.4; }
 
-        /* RSVP FORM */
+        /* RSVP SECTION */
         .rsvp-section { 
-            background: white; padding: 40px 20px; text-align: center; 
+            background: white; padding: 40px 25px; text-align: center; 
             max-width: 600px; margin: 0 auto 60px; border-radius: 4px; 
             position: relative; z-index: 50; 
         }
         .form-group { margin-bottom: 20px; text-align: left; }
         label { font-size: 11px; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 8px; }
-        input, select { 
-            width: 100%; padding: 15px; border: 1px solid #ddd; 
-            font-size: 16px; position: relative; z-index: 60;
+        input, select { width: 100%; padding: 15px; border: 1px solid #ddd; font-size: 16px; border-radius: 4px; }
+        
+        .radio-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        @media (min-width: 768px) { .radio-container { flex-direction: row; justify-content: center; gap: 25px; } }
+
+        .radio-option { 
+            display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; 
+            padding: 12px; border: 1px solid #eee; border-radius: 4px; transition: 0.3s;
         }
-        /* Style for Radio Buttons to make them easier to click */
-        .radio-container { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
-        .radio-option { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
-        .radio-option input { width: 20px; height: 20px; cursor: pointer; }
+        .radio-option:hover { border-color: var(--accent-gold); background-color: #fcfaf8; }
+        .radio-option input { width: 20px; height: 20px; accent-color: var(--accent-gold); }
 
         .btn-submit { 
             background: var(--accent-gold); color: white; border: none; padding: 20px; 
             cursor: pointer; text-transform: uppercase; width: 100%; font-weight: bold; 
-            position: relative; z-index: 70;
+            border-radius: 4px; margin-top: 10px;
         }
         
         #thanks { display:none; color: var(--accent-gold); font-weight: bold; padding: 20px; border: 2px dashed var(--accent-gold); margin-top: 20px; }
@@ -195,9 +200,11 @@
     </div>
 
     <div class="main-content" id="content">
+        <!-- PAGE 1 -->
         <div class="container">
             <div class="content-side">
-                <div style="font-size:32px; color:var(--accent-gold);">†</div>
+                <div style="font-size:32px; color:var(--accent-gold); margin-bottom: 5px;">†</div>
+                <div style="text-transform:uppercase; letter-spacing:3px; font-size:11px; opacity: 0.7;">Join us in a celebration!</div>
                 <h1>Lexxus Uriel's<br>Christening</h1>
                 <div class="date-grid">
                     <div>SATURDAY</div>
@@ -205,7 +212,8 @@
                     <div>10:00 AM</div>
                 </div>
                 <p><strong>San Roque Parish Church</strong></p>
-                <p>Cuyapo, Nueva Ecija</p><br>
+                <p style="opacity: 0.8; font-size: 13px;">Cuyapo, Nueva Ecija</p><br>
+                <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Reception to follow at:</p>
                 <p style="color:var(--accent-gold);"><strong>Terra Rosa Resort</strong></p>
             </div>
             <div class="image-side photo-1">
@@ -213,9 +221,10 @@
             </div>
         </div>
 
+        <!-- PAGE 2 (NINONG) -->
         <div class="container">
             <div class="content-side">
-                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px;">Ninong</h2>
+                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px; font-size: 28px;">Ninong</h2>
                 <div class="list-names">
                     <p>John Paul Cardenas</p><p>Noel Felicitas</p><p>Christian Abayon</p>
                     <p>Mark Dom Esteron</p><p>Thern Ngan</p><p>Christopher Idia</p>
@@ -227,9 +236,10 @@
             </div>
         </div>
 
+        <!-- PAGE 3 (NINANG) -->
         <div class="container">
             <div class="content-side">
-                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px;">Ninang</h2>
+                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px; font-size: 28px;">Ninang</h2>
                 <div class="list-names">
                     <p>Jhaztine Dhey Domingo</p><p>Whindy Fabia</p><p>Mykha Santos</p>
                     <p>Michelle Soriano</p><p>Melissa Domingo</p><p>Rose Ann Agustin</p>
@@ -241,9 +251,10 @@
             </div>
         </div>
 
+        <!-- RSVP -->
         <div class="rsvp-section">
-            <h2 style="font-family: 'Bodoni Moda'; font-size: 30px;">RSVP</h2>
-            <p style="margin-bottom: 25px; font-size: 13px;">Kindly respond by May 10, 2026</p>
+            <h2 style="font-family: 'Bodoni Moda'; font-size: 32px; margin-bottom: 5px;">RSVP</h2>
+            <p style="margin-bottom: 25px; font-size: 13px; opacity: 0.7;">Kindly respond by May 10, 2026</p>
             
             <form id="rsvpForm">
                 <div class="form-group">
@@ -261,19 +272,19 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Attending?</label>
+                    <label>Will you join us?</label>
                     <div class="radio-container">
                         <label class="radio-option">
-                            <input type="radio" name="attending" value="Yes" checked> Yes
+                            <input type="radio" name="attending" value="Yes" checked> Will be there with joy!
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="attending" value="No"> No
+                            <input type="radio" name="attending" value="No"> Will celebrate from afar
                         </label>
                     </div>
                 </div>
                 <button type="submit" class="btn-submit" id="submitBtn">Send RSVP</button>
             </form>
-            <div id="thanks">Thank you! Response received.</div>
+            <div id="thanks">Thank you! Your response has been received.</div>
         </div>
     </div>
 
@@ -281,11 +292,9 @@
         function openInvitation() {
             const overlay = document.getElementById('intro-overlay');
             document.getElementById('envelope-box').classList.add('open');
-            
             setTimeout(() => {
                 overlay.style.transform = 'translateY(-100%)';
                 document.getElementById('content').classList.add('visible');
-                // DISABLING the overlay entirely after it moves so it cannot block clicks
                 setTimeout(() => { overlay.style.display = 'none'; }, 1000);
             }, 800);
         }
@@ -334,6 +343,25 @@
             }
         }
 
+        const handleSparkle = (e) => {
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            if (Math.random() > 0.85) {
+                const s = document.createElement('div');
+                s.className = 'cursor-sparkle';
+                s.style.left = clientX + 'px';
+                s.style.top = clientY + 'px';
+                document.body.appendChild(s);
+                setTimeout(() => {
+                    s.style.transform = `scale(0.2) translateY(15px)`;
+                    s.style.opacity = '0';
+                    setTimeout(() => s.remove(), 500);
+                }, 50);
+            }
+        };
+
+        document.addEventListener('mousemove', handleSparkle);
+        document.addEventListener('touchmove', handleSparkle);
         window.onload = createParticles;
     </script>
 </body>
