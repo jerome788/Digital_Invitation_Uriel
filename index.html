@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexxus Uriel's Christening</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f4f0;
+            --accent-gold: #b5914f;
+            --text-dark: #1a1a1a;
+            --paper-white: #ffffff;
+            --envelope-color: #e3dcd2;
+            --envelope-dark: #c5bbb0;
+            --sage-leaf: #8fa38a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: #dcd7cf;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            cursor: crosshair;
+        }
+
+        /* --- BACKGROUND EFFECTS --- */
+        #particle-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute; background: #fff; filter: blur(60px);
+            border-radius: 50%; opacity: 0.4; animation: drift linear infinite;
+        }
+
+        @keyframes drift { from { transform: translateX(-30vw); } to { transform: translateX(110vw); } }
+
+        .leaf, .feather { position: absolute; opacity: 0.3; pointer-events: none; animation: falling linear infinite; }
+        .leaf { width: 15px; height: 25px; background: var(--sage-leaf); border-radius: 0 100% 0 100%; }
+        .feather { width: 20px; height: 40px; background: white; border-radius: 50% 50% 10% 10%; filter: blur(1px); }
+
+        @keyframes falling {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.4; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        .cursor-sparkle {
+            position: fixed; width: 6px; height: 6px; background: var(--accent-gold);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transition: transform 0.1s ease-out, opacity 0.5s ease-out;
+        }
+
+        .burst {
+            position: fixed; width: 4px; height: 4px; background: white;
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            animation: burst-anim 0.8s ease-out forwards;
+        }
+
+        @keyframes burst-anim {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+        }
+
+        /* --- ENVELOPE --- */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #2c2c2c; display: flex; justify-content: center; align-items: center;
+            z-index: 1000; transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .envelope-wrapper { position: relative; cursor: pointer; perspective: 1000px; }
+        .envelope {
+            position: relative; width: 300px; height: 200px;
+            background: var(--envelope-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .envelope:before {
+            content: ""; position: absolute; z-index: 2;
+            border-top: 100px solid transparent; border-right: 150px solid var(--envelope-color);
+            border-bottom: 100px solid var(--envelope-color); border-left: 150px solid var(--envelope-dark);
+            top: 0;
+        }
+        .flap {
+            position: absolute; top: 0; width: 0; height: 0;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
+            border-top: 100px solid var(--envelope-dark);
+            transform-origin: top; transition: transform 0.6s ease; z-index: 3;
+        }
+        .envelope.open .flap { transform: rotateX(180deg); z-index: 1; }
+        .seal {
+            position: absolute; top: 80px; left: 130px; width: 40px; height: 40px; 
+            background: var(--accent-gold); border-radius: 50%; z-index: 4; 
+            display: flex; align-items: center; justify-content: center; color: white;
+            font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* --- LAYOUT --- */
+        .main-content {
+            opacity: 0; transform: translateY(50px);
+            transition: 1.5s ease; max-width: 900px;
+            margin: 40px auto; position: relative; z-index: 5;
+        }
+        .main-content.visible { opacity: 1; transform: translateY(0); }
+
+        .container {
+            width: 100%; background-color: var(--paper-white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 60px; overflow: hidden;
+            display: grid; grid-template-columns: 1.2fr 1fr; min-height: 600px;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .image-side { height: 400px; }
+        }
+
+        .content-side { padding: 60px 40px; text-align: center; z-index: 2; position: relative; background: white;}
+        .image-side { background-size: cover; background-position: center; position: relative; z-index: 1; }
+
+        /* --- TEAR DESIGN --- */
+        .tear-effect { position: absolute; top: 0; bottom: 0; left: -20px; width: 50px; z-index: 10; }
+        .tear-gold, .tear-white {
+            position: absolute; top: 0; width: 100%; height: 100%;
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 1000' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C20,50 5,100 15,150 C30,200 10,250 20,300 C5,350 25,400 10,450 C30,500 15,550 25,600 C10,650 20,700 5,750 C25,800 10,850 20,900 C5,950 25,1000 25,1000 L100,1000 L100,0 Z' /%3E%3C/svg%3E");
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 1000' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C20,50 5,100 15,150 C30,200 10,250 20,300 C5,350 25,400 10,450 C30,500 15,550 25,600 C10,650 20,700 5,750 C25,800 10,850 20,900 C5,950 25,1000 25,1000 L100,1000 L100,0 Z' /%3E%3C/svg%3E");
+            -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+        }
+        .tear-gold { background-color: var(--accent-gold); left: 0; }
+        .tear-white { background-color: white; left: 8px; }
+
+        .photo-1 { background-image: url('1.JPG'); }
+        .photo-2 { background-image: url('2.JPG'); }
+        .photo-3 { background-image: url('3.JPG'); }
+
+        h1 { font-family: 'Bodoni Moda', serif; font-size: 42px; font-weight: 400; margin: 20px 0; }
+        .date-grid { display: flex; align-items: center; gap: 20px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; justify-content: center; width: 100%; padding: 15px 0; margin: 20px 0; }
+        .big-day { font-size: 32px; color: var(--accent-gold); }
+
+        /* RSVP FORM */
+        .rsvp-section { background: white; padding: 60px 40px; text-align: center; max-width: 600px; margin: 0 auto 100px; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; font-family: inherit; margin-top: 5px; outline-color: var(--accent-gold); }
+        .btn-submit { background: var(--accent-gold); color: white; border: none; padding: 18px 40px; cursor: pointer; text-transform: uppercase; width: 100%; letter-spacing: 2px; transition: 0.3s; font-weight: bold; }
+        .btn-submit:hover { background: #9a7b41; letter-spacing: 4px; }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; letter-spacing: 2px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="particle-container"></div>
+
+    <div id="intro-overlay">
+        <div class="envelope-wrapper" onclick="openInvitation()">
+            <div class="envelope" id="envelope-box">
+                <div class="flap"></div>
+                <div class="seal">†</div>
+            </div>
+            <div style="color:white; margin-top:30px; text-align:center; font-size:12px; letter-spacing:4px; text-transform:uppercase;">Click to Open</div>
+        </div>
+    </div>
+
+    <div class="main-content" id="content">
+        <!-- PAGE 1 -->
+        <div class="container">
+            <div class="content-side">
+                <div style="font-size:40px; color:var(--accent-gold); margin-bottom:10px;">†</div>
+                <div style="text-transform:uppercase; letter-spacing:4px; font-size:12px;">Join us in a celebration!</div>
+                <h1>Lexxus Uriel's<br>Christening</h1>
+                <div class="date-grid">
+                    <div>SATURDAY</div>
+                    <div class="big-day">MAY 23</div>
+                    <div>10:00 AM</div>
+                </div>
+                <p><strong>San Roque Parish Church</strong></p>
+                <p>Cuyapo, Nueva Ecija</p><br>
+                <p>Reception to follow at:</p>
+                <p><strong>Terra Rosa Resort</strong></p>
+            </div>
+            <div class="image-side photo-1">
+                <div class="tear-effect"><div class="tear-gold"></div><div class="tear-white"></div></div>
+            </div>
+        </div>
+
+        <!-- PAGE 2 (NINONG) -->
+        <div class="container">
+            <div class="content-side">
+                <div style="font-size:30px; color:var(--accent-gold);">†</div>
+                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px;">Ninong</h2>
+                <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; line-height:2.2;">
+                    <p>John Paul Cardenas</p><p>Noel Felicitas</p><p>Christian Abayon</p>
+                    <p>Mark Dom Esteron</p><p>Thern Ngan</p><p>Christopher Idia</p>
+                    <p>Maykel Andrew Beltran</p><p>Christian Paul Badua</p><p>Veneth Jayson Clara</p>
+                </div>
+            </div>
+            <div class="image-side photo-2">
+                <div class="tear-effect"><div class="tear-gold"></div><div class="tear-white"></div></div>
+            </div>
+        </div>
+
+        <!-- PAGE 3 (NINANG) -->
+        <div class="container">
+            <div class="content-side">
+                <div style="font-size:30px; color:var(--accent-gold);">†</div>
+                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px;">Ninang</h2>
+                <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; line-height:2.2;">
+                    <p>Jhaztine Dhey Domingo</p><p>Whindy Fabia</p><p>Mykha Santos</p>
+                    <p>Michelle Soriano</p><p>Melissa Domingo</p><p>Rose Ann Agustin</p>
+                    <p>Jean Marie Flores</p><p>Judy Ann Esteron</p><p>Cassandra Sumalbag</p>
+                </div>
+            </div>
+            <div class="image-side photo-3">
+                <div class="tear-effect"><div class="tear-gold"></div><div class="tear-white"></div></div>
+            </div>
+        </div>
+
+        <!-- RSVP -->
+        <div class="rsvp-section">
+            <h2 style="font-family: 'Bodoni Moda'; font-size: 36px; margin-bottom: 5px;">RSVP</h2>
+            <p style="margin-bottom: 35px; font-size: 14px; opacity: 0.8;">Kindly respond by May 10, 2026</p>
+            
+            <form id="rsvpForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="form-name" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="form-phone" required placeholder="Enter phone number">
+                </div>
+                <div class="form-group">
+                    <label>Number of Guests</label>
+                    <select id="form-guests">
+                        <option value="1">1 Person</option>
+                        <option value="2">2 Persons</option>
+                        <option value="3">3 Persons</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Attending?</label>
+                    <div style="margin-top:12px; font-size: 14px;">
+                        <input type="radio" name="attending" value="Yes" checked style="width:auto; margin-right: 5px;"> Yes, I'll be there! &nbsp;&nbsp;
+                        <input type="radio" name="attending" value="No" style="width:auto; margin-right: 5px;"> Sorry, I can't
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="submitBtn">Send RSVP</button>
+            </form>
+            <div id="thanks" style="display:none; color: var(--accent-gold); font-weight: bold; padding: 20px; border: 2px dashed var(--accent-gold); margin-top: 20px;">
+                Thank you! Your response has been received.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openInvitation() {
+            document.getElementById('envelope-box').classList.add('open');
+            setTimeout(() => {
+                document.getElementById('intro-overlay').style.transform = 'translateY(-100%)';
+                document.getElementById('content').classList.add('visible');
+            }, 800);
+        }
+
+        // --- RSVP LOGIC ---
+        const rsvpForm = document.getElementById('rsvpForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        rsvpForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // UI Feedback
+            submitBtn.disabled = true;
+            submitBtn.innerText = "SENDING...";
+
+            // Get Data
+            const payload = {
+                data: [{
+                    name: document.getElementById('form-name').value,
+                    phone: document.getElementById('form-phone').value,
+                    guests: document.getElementById('form-guests').value,
+                    attending: document.querySelector('input[name="attending"]:checked').value
+                }]
+            };
+
+            // Set a timeout of 10 seconds. If it takes longer, reset the button.
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            fetch('https://sheetdb.io/api/v1/3jh8i0ptu5vm9', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            })
+            .then(response => {
+                if (response.ok) {
+                    rsvpForm.style.display = 'none';
+                    document.getElementById('thanks').style.display = 'block';
+                } else {
+                    throw new Error("Server error");
+                }
+            })
+            .catch(error => {
+                console.error("Submission error:", error);
+                alert("Failed to send. Please check your internet connection or try again in a moment.");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "SEND RSVP";
+            })
+            .finally(() => clearTimeout(timeoutId));
+        });
+
+        // --- DECORATIONS ---
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            for (let i = 0; i < 15; i++) {
+                const type = Math.random() > 0.5 ? 'leaf' : 'feather';
+                const el = document.createElement('div');
+                el.className = type;
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = (Math.random() * 8 + 8) + 's';
+                el.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(el);
+            }
+            for (let i = 0; i < 4; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                cloud.style.width = (Math.random() * 300 + 200) + 'px';
+                cloud.style.height = '120px';
+                cloud.style.top = (Math.random() * 90) + 'vh';
+                cloud.style.left = '-400px';
+                cloud.style.animationDuration = (Math.random() * 40 + 40) + 's';
+                container.appendChild(cloud);
+            }
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.85) {
+                const s = document.createElement('div');
+                s.className = 'cursor-sparkle';
+                s.style.left = e.clientX + 'px';
+                s.style.top = e.clientY + 'px';
+                document.body.appendChild(s);
+                setTimeout(() => {
+                    s.style.transform = `scale(0.2) translateY(20px)`;
+                    s.style.opacity = '0';
+                    setTimeout(() => s.remove(), 500);
+                }, 50);
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            for(let i=0; i<10; i++) {
+                const b = document.createElement('div');
+                b.className = 'burst';
+                b.style.left = e.clientX + 'px';
+                b.style.top = e.clientY + 'px';
+                b.style.setProperty('--x', (Math.random()-0.5)*120 + 'px');
+                b.style.setProperty('--y', (Math.random()-0.5)*120 + 'px');
+                document.body.appendChild(b);
+                setTimeout(() => b.remove(), 800);
+            }
+        });
+
+        window.onload = createParticles;
+    </script>
+</body>
+</html>
