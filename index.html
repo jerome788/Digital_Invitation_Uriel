@@ -16,6 +16,7 @@
             --envelope-color: #e3dcd2;
             --envelope-dark: #c5bbb0;
             --sage-leaf: #8fa38a;
+            --soft-white: rgba(255, 255, 255, 0.8);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -28,20 +29,26 @@
             scroll-behavior: smooth;
         }
 
-        /* --- BACKGROUND EFFECTS --- */
+        /* --- OVERLAY PARTICLE SYSTEM --- */
         #particle-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none; overflow: hidden;
+            z-index: 100; /* Floats OVER the content */
+            pointer-events: none; /* Allows clicking buttons through the particles */
+            overflow: hidden;
         }
 
-        .leaf, .feather { position: absolute; opacity: 0.3; pointer-events: none; animation: falling linear infinite; }
-        .leaf { width: 12px; height: 20px; background: var(--sage-leaf); border-radius: 0 100% 0 100%; }
-        .feather { width: 15px; height: 30px; background: white; border-radius: 50% 50% 10% 10%; filter: blur(1px); }
+        .particle { position: absolute; pointer-events: none; animation: falling linear infinite; }
+        
+        .leaf { width: 12px; height: 20px; background: var(--sage-leaf); border-radius: 0 100% 0 100%; opacity: 0.4; }
+        .feather { width: 15px; height: 30px; background: white; border-radius: 50% 50% 10% 10%; filter: blur(1px); opacity: 0.5; }
+        .gold-dust { width: 4px; height: 4px; background: var(--accent-gold); border-radius: 50%; box-shadow: 0 0 8px var(--accent-gold); opacity: 0.6; }
+        .petal { width: 10px; height: 10px; background: var(--soft-white); border-radius: 50% 0 50% 50%; opacity: 0.6; }
 
         @keyframes falling {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.4; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(720deg) translateX(50px); opacity: 0; }
         }
 
         .cursor-sparkle {
@@ -95,10 +102,10 @@
 
         .container {
             width: 100%; background-color: var(--paper-white);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             margin-bottom: 40px; overflow: hidden;
             display: flex; flex-direction: column;
-            position: relative;
+            position: relative; border-radius: 8px;
         }
 
         @media (min-width: 768px) {
@@ -106,21 +113,19 @@
             .main-content { margin: 40px auto; padding: 0; }
         }
 
-        .content-side { padding: 50px 30px; text-align: center; background: white; z-index: 5; position: relative;}
+        .content-side { padding: 60px 40px; text-align: center; background: white; z-index: 5; position: relative;}
         
         .image-side { 
-            height: 450px; /* Increased height for better view of subject */
+            height: 450px; 
             background-size: cover; 
-            background-position: center 15%; /* FIX: Keeps the head visible */
+            background-position: center 15%; 
             position: relative; 
             z-index: 1; 
         }
         @media (min-width: 768px) { .image-side { height: auto; } }
 
-        /* --- TEAR DESIGN (Responsive) --- */
+        /* --- TEAR DESIGN --- */
         .tear-effect { position: absolute; z-index: 10; pointer-events: none; }
-        
-        /* Mobile: Horizontal jagged tear */
         @media (max-width: 767px) {
             .tear-effect { top: -25px; left: 0; width: 100%; height: 50px; }
             .tear-gold, .tear-white {
@@ -132,8 +137,6 @@
             .tear-gold { background-color: var(--accent-gold); top: 0; }
             .tear-white { background-color: white; top: -10px; }
         }
-
-        /* Desktop: Vertical jagged tear */
         @media (min-width: 768px) {
             .tear-effect { top: 0; left: -25px; width: 50px; height: 100%; }
             .tear-gold, .tear-white {
@@ -150,38 +153,40 @@
         .photo-2 { background-image: url('2.JPG'); }
         .photo-3 { background-image: url('3.JPG'); }
 
-        h1 { font-family: 'Bodoni Moda', serif; font-size: 36px; font-weight: 400; margin: 15px 0; line-height: 1.1; }
-        .date-grid { display: flex; align-items: center; gap: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; justify-content: center; width: 100%; padding: 15px 0; margin: 20px 0; font-size: 11px; }
-        .big-day { font-size: 28px; color: var(--accent-gold); font-weight: bold; }
-        .list-names { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; line-height: 2.4; }
+        h1 { font-family: 'Bodoni Moda', serif; font-size: 42px; font-weight: 400; margin: 15px 0; line-height: 1.1; color: var(--text-dark); }
+        .date-grid { display: flex; align-items: center; gap: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; justify-content: center; width: 100%; padding: 15px 0; margin: 25px 0; font-size: 11px; letter-spacing: 2px; }
+        .big-day { font-size: 32px; color: var(--accent-gold); font-weight: bold; }
+        .list-names { font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase; line-height: 2.6; color: #444; }
 
         /* RSVP SECTION */
         .rsvp-section { 
-            background: white; padding: 40px 25px; text-align: center; 
-            max-width: 600px; margin: 0 auto 60px; border-radius: 4px; 
-            position: relative; z-index: 50; 
+            background: white; padding: 50px 30px; text-align: center; 
+            max-width: 650px; margin: 0 auto 80px; border-radius: 8px; 
+            position: relative; z-index: 50; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-        .form-group { margin-bottom: 20px; text-align: left; }
-        label { font-size: 11px; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 8px; }
-        input, select { width: 100%; padding: 15px; border: 1px solid #ddd; font-size: 16px; border-radius: 4px; }
+        .form-group { margin-bottom: 25px; text-align: left; }
+        label { font-size: 11px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 10px; color: var(--accent-gold); }
+        input, select { width: 100%; padding: 18px; border: 1px solid #e0e0e0; font-size: 16px; border-radius: 6px; outline: none; background-color: #fafafa; }
+        input:focus { border-color: var(--accent-gold); }
         
-        .radio-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
-        @media (min-width: 768px) { .radio-container { flex-direction: row; justify-content: center; gap: 25px; } }
+        .radio-container { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        @media (min-width: 768px) { .radio-container { flex-direction: row; justify-content: center; gap: 30px; } }
 
         .radio-option { 
-            display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; 
-            padding: 12px; border: 1px solid #eee; border-radius: 4px; transition: 0.3s;
+            display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; 
+            padding: 15px; border: 1px solid #eee; border-radius: 6px; transition: 0.3s; background: white;
         }
-        .radio-option:hover { border-color: var(--accent-gold); background-color: #fcfaf8; }
-        .radio-option input { width: 20px; height: 20px; accent-color: var(--accent-gold); }
+        .radio-option:hover { border-color: var(--accent-gold); background-color: #fdfaf5; }
+        .radio-option input { width: 22px; height: 22px; accent-color: var(--accent-gold); cursor: pointer; }
 
         .btn-submit { 
-            background: var(--accent-gold); color: white; border: none; padding: 20px; 
+            background: var(--accent-gold); color: white; border: none; padding: 22px; 
             cursor: pointer; text-transform: uppercase; width: 100%; font-weight: bold; 
-            border-radius: 4px; margin-top: 10px;
+            border-radius: 6px; margin-top: 15px; letter-spacing: 2px; transition: 0.3s;
         }
+        .btn-submit:hover { background: #9c7b41; transform: translateY(-2px); }
         
-        #thanks { display:none; color: var(--accent-gold); font-weight: bold; padding: 20px; border: 2px dashed var(--accent-gold); margin-top: 20px; }
+        #thanks { display:none; color: var(--accent-gold); font-weight: bold; padding: 25px; border: 2px dashed var(--accent-gold); margin-top: 25px; border-radius: 6px; }
 
     </style>
 </head>
@@ -214,7 +219,7 @@
                 <p><strong>San Roque Parish Church</strong></p>
                 <p style="opacity: 0.8; font-size: 13px;">Cuyapo, Nueva Ecija</p><br>
                 <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Reception to follow at:</p>
-                <p style="color:var(--accent-gold);"><strong>Terra Rosa Resort</strong></p>
+                <p style="color:var(--accent-gold); font-size: 18px;"><strong>Terra Rosa Resort</strong></p>
             </div>
             <div class="image-side photo-1">
                 <div class="tear-effect"><div class="tear-gold"></div><div class="tear-white"></div></div>
@@ -224,7 +229,7 @@
         <!-- PAGE 2 (NINONG) -->
         <div class="container">
             <div class="content-side">
-                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px; font-size: 28px;">Ninong</h2>
+                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px; font-size: 32px;">Ninong</h2>
                 <div class="list-names">
                     <p>John Paul Cardenas</p><p>Noel Felicitas</p><p>Christian Abayon</p>
                     <p>Mark Dom Esteron</p><p>Thern Ngan</p><p>Christopher Idia</p>
@@ -239,7 +244,7 @@
         <!-- PAGE 3 (NINANG) -->
         <div class="container">
             <div class="content-side">
-                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px; font-size: 28px;">Ninang</h2>
+                <h2 style="font-family:'Bodoni Moda'; margin-bottom:20px; font-size: 32px;">Ninang</h2>
                 <div class="list-names">
                     <p>Jhaztine Dhey Domingo</p><p>Whindy Fabia</p><p>Mykha Santos</p>
                     <p>Michelle Soriano</p><p>Melissa Domingo</p><p>Rose Ann Agustin</p>
@@ -253,13 +258,13 @@
 
         <!-- RSVP -->
         <div class="rsvp-section">
-            <h2 style="font-family: 'Bodoni Moda'; font-size: 32px; margin-bottom: 5px;">RSVP</h2>
-            <p style="margin-bottom: 25px; font-size: 13px; opacity: 0.7;">Kindly respond by May 10, 2026</p>
+            <h2 style="font-family: 'Bodoni Moda'; font-size: 36px; margin-bottom: 5px;">RSVP</h2>
+            <p style="margin-bottom: 30px; font-size: 13px; opacity: 0.7;">Kindly respond by May 10, 2026</p>
             
             <form id="rsvpForm">
                 <div class="form-group">
                     <label>Full Name</label>
-                    <input type="text" id="form-name" required placeholder="Your Name">
+                    <input type="text" id="form-name" required placeholder="Enter your full name">
                 </div>
                 <div class="form-group">
                     <label>Phone Number</label>
@@ -275,16 +280,16 @@
                     <label>Will you join us?</label>
                     <div class="radio-container">
                         <label class="radio-option">
-                            <input type="radio" name="attending" value="Yes" checked> Will be there with joy!
+                            <input type="radio" name="attending" value="Yes" checked> Will be there with joy! ❤
                         </label>
                         <label class="radio-option">
                             <input type="radio" name="attending" value="No"> Will celebrate from afar
                         </label>
                     </div>
                 </div>
-                <button type="submit" class="btn-submit" id="submitBtn">Send RSVP</button>
+                <button type="submit" class="btn-submit" id="submitBtn">Send RSVP Response</button>
             </form>
-            <div id="thanks">Thank you! Your response has been received.</div>
+            <div id="thanks">Thank you! Your response has been received. See you there! ❤</div>
         </div>
     </div>
 
@@ -323,22 +328,37 @@
                 if (res.ok) {
                     document.getElementById('rsvpForm').style.display = 'none';
                     document.getElementById('thanks').style.display = 'block';
+                    document.getElementById('thanks').scrollIntoView({ behavior: 'smooth' });
                 }
             })
             .catch(() => {
                 alert("Error sending RSVP.");
                 btn.disabled = false;
-                btn.innerText = "SEND RSVP";
+                btn.innerText = "Send RSVP Response";
             });
         });
 
         function createParticles() {
             const container = document.getElementById('particle-container');
-            for (let i = 0; i < 15; i++) {
+            const particleCount = 45; // Increased density
+
+            for (let i = 0; i < particleCount; i++) {
                 const el = document.createElement('div');
-                el.className = Math.random() > 0.5 ? 'leaf' : 'feather';
+                const random = Math.random();
+                
+                if (random < 0.3) el.className = 'particle leaf';
+                else if (random < 0.6) el.className = 'particle feather';
+                else if (random < 0.8) el.className = 'particle petal';
+                else el.className = 'particle gold-dust';
+
                 el.style.left = Math.random() * 100 + 'vw';
-                el.style.animationDuration = (Math.random() * 8 + 7) + 's';
+                el.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                el.style.animationDelay = (Math.random() * 5) + 's';
+                
+                // Randomize sizes slightly
+                const sizeScale = 0.5 + Math.random();
+                el.style.transform = `scale(${sizeScale})`;
+                
                 container.appendChild(el);
             }
         }
